@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { getPosts } from "../services/api";
+import { getPosts, upvotePost } from "../services/api";
 import { Link } from "react-router-dom";
 
 class Index extends Component {
@@ -17,18 +17,46 @@ class Index extends Component {
     });
   }
 
+  handleUpvote = (id, type) => {
+    var self = this;
+
+    upvotePost(id, type).then(function(json) {
+      getPosts().then(function(json) {
+        self.setState({ posts: json });
+      });
+    });
+  };
+
+  handleDownvote = (id, type) => {
+    var self = this;
+
+    upvotePost(id, type).then(function(json) {
+      getPosts().then(function(json) {
+        self.setState({ posts: json });
+      });
+    });
+  };
+
   render() {
     var posts = this.state.posts.map((post, idx) => {
       return (
         <li key={idx}>
           <Link to={`/posts/${post._id}`}>{post.title}</Link>
           <p>Upvotes: {post.upvotes}</p>
-          <a href="#" className="btn btn-success">
+          <a
+            href="#"
+            onClick={() => this.handleUpvote(post._id, "upvote")}
+            className="btn btn-success"
+          >
             Upvote
             <i className="fa fa-thumbs-up" />
           </a>
           &nbsp; &nbsp;
-          <a href="#" className="btn btn-danger">
+          <a
+            href="#"
+            onClick={() => this.handleDownvote(post._id, "downvote")}
+            className="btn btn-danger"
+          >
             Downvote <i className="fa fa-thumbs-down" />
           </a>
         </li>
